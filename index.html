@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Administration Colis</title>
+    <link rel="stylesheet" type="text/css" href="http://w2ui.com/src/w2ui-1.4.2.min.css" />
+	<link rel="stylesheet" href="styleadmin.css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+    <script type="text/javascript" src="http://w2ui.com/src/w2ui-1.4.2.min.js"></script>
+</head>
+<body>
+
+
+<div id="bandeau" style="width: 100%; height: 40px;">Gestion colis</div>
+<br>
+<br>
+<br>
+<div id="titre" style="margin-left: 30%">Gestion des personnes</div>
+<br>
+<div id="grid" style="width: 40%; height: 400px; margin-left: 27%"></div>
+<br>
+
+<script defer type="text/javascript">
+var tab = [];
+readPersonnes();
+
+function readPersonnes(){
+  data = {"table":"personne"};
+  $.ajax({url :'r.php',
+        data: data ,
+        success : function (html){
+          pers = JSON.parse(html);
+          populatePersonnes(pers);
+    }
+        });
+	
+     }
+function populatePersonnes(personnes){
+	personnes.forEach(function(s){
+		tab.push({ recid: s["id_perso"], nom: s["nom"], prenom: s["prenom"], check: false});
+	});
+	
+	
+	$(function () {
+    $('#grid').w2grid({ 
+        name: 'grid', 
+        show: { 
+            toolbar: true,
+            footer: true,
+            toolbarSave: true
+        },
+        columns: [                
+            { field: 'recid', caption: 'ID_Personne', size: '100px', sortable: true, resizable: true },
+            { field: 'nom', caption: 'nom', size: '120px', sortable: true, resizable: true, 
+                editable: { type: 'text' }
+            },
+            { field: 'prenom', caption: 'prenom', size: '120px', sortable: true, resizable: true, 
+                editable: { type: 'text' }
+            },
+            { field: 'check', caption: 'check', size: '60px', sortable: true, resizable: true, 
+                editable: { type: 'checkbox' } 
+            },
+        ],
+        toolbar: {
+            items: [
+                { id: 'add', type: 'button', caption: 'Ajouter une personne', icon: 'w2ui-icon-plus' }
+            ],
+            onClick: function (event) {
+                if (event.target == 'add') {
+                    w2ui.grid.add({ recid: w2ui.grid.records.length + 1 });
+                }
+            }
+        },
+        records: tab
+        
+    });    
+});
+}
+</script>
+
+<br>
+<br>
+<div id="titre" style="margin-left: 30%">Gestion des colis</div>
+<br>
+<div id="grid2" style="width: 40%; height: 400px; margin-left: 27%"></div>
+<br>
+<script defer type="text/javascript">
+var tabcolis = [];
+readcolis();
+
+function readcolis(){
+  data = {"table":"colis", "id_perso":1};
+  $.ajax({url :'r.php',
+        data: data ,
+        success : function (html){
+          col = JSON.parse(html);
+        populatecolis(col);
+    }
+        });
+	
+     
+
+}
+
+function populatecolis(Colis){
+
+Colis.forEach(function(s){
+		tabcolis.push({ recid: s["id_perso"], id_colis: s["id_colis"], nom:s["nom_colis"], check: false});
+	});
+
+$(function () {
+    $('#grid2').w2grid({ 
+        name: 'grid2', 
+        show: { 
+            toolbar: true,
+            footer: true,
+            toolbarSave: true
+        },
+        columns: [                
+            { field: 'recid', caption: 'id_perso', size: '50px', sortable: true, resizable: true },
+			{ field: 'id_colis', caption: 'id_colis', size: '50px', sortable: true, resizable: true },
+			{ field: 'nom', caption: 'nom', size: '50px', sortable: true, resizable: true },
+            { field: 'check', caption: 'check', size: '60px', sortable: true, resizable: true
+            },
+        ],
+        toolbar: {
+            items: [
+                { id: 'add', type: 'button', caption: 'Add Record', icon: 'w2ui-icon-plus' }
+            ],
+            onClick: function (event) {
+                if (event.target == 'add') {
+                    w2ui.grid2.add({ recid: w2ui.grid2.records.length + 1 });
+                }
+            }
+        },
+        records: tabcolis
+    });    
+});
+
+}
+</script>
+</body>
+</html>
